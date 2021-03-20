@@ -20,8 +20,15 @@ class NodeRelaySession extends EventEmitter {
   }
 
   run() {
+    let vc = this.conf.vc || 'copy';
+    let ac = this.conf.ac || 'copy';
     let format = this.conf.ouPath.startsWith('rtsp://') ? 'rtsp' : 'flv';
-    let argv = ['-i', this.conf.inPath, '-c', 'copy', '-f', format, this.conf.ouPath];
+    let argv = ['-i', this.conf.inPath];
+    Array.prototype.push.apply(argv, ['-c:v', vc]);
+    Array.prototype.push.apply(argv, this.conf.vcParam);
+    Array.prototype.push.apply(argv, ['-c:a', ac]);
+    Array.prototype.push.apply(argv, this.conf.acParam);
+    Array.prototype.push.apply(argv, ['-f', format, this.conf.ouPath]);
     if (this.conf.inPath[0] === '/' || this.conf.inPath[1] === ':') {
       argv.unshift('-1');
       argv.unshift('-stream_loop');
